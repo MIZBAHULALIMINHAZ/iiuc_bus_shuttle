@@ -7,7 +7,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import AddDriverForm, RemoveDriverForm
 from .models import Driver
-from .models import Route
 
 
 def register(request):
@@ -103,42 +102,6 @@ def remove_driver_view(request):
         form = RemoveDriverForm()
     return render(request, 'remove_driver.html', {'form': form})
 
-def add_route_view(request):
-    if request.method == "POST":
-        name = request.POST.get('name')
-        start_location = request.POST.get('start_location')
-        end_location = request.POST.get('end_location')
-        scheduled_time = request.POST.get('scheduled_time')
-
-        
-        if Route.objects.filter(name=name).exists():
-            messages.error(request, "Route with this name already exists.")
-        else:
-            
-            Route.objects.create(
-                name=name,
-                start_location=start_location,
-                end_location=end_location,
-            )
-            messages.success(request, "Route added successfully.")
-            return redirect('manager_dashboard')
-
-    return render(request, 'add_route.html')
-
-def remove_route_view(request):
-    if request.method == "POST":
-        name = request.POST.get('name')
-
-        
-        if Route.objects.filter(name=name).exists():
-            Route.objects.filter(name=name).delete()
-            messages.success(request, f"Route '{name}' removed successfully.")
-        else:
-            messages.error(request, "Route not found.")
-
-        return redirect('manager_dashboard')
-
-    return render(request, 'remove_route.html')
 
 from .forms import AddBusForm
 from .models import Bus

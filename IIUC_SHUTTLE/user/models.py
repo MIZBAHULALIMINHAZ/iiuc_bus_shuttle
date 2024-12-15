@@ -24,13 +24,6 @@ class Driver(models.Model):
         return self.phone_number
 
 
-class Route(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    start_location = models.CharField(max_length=255)
-    end_location = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.name}: {self.start_location} → {self.end_location}"
     
 class Bus(models.Model):
     BUS_TYPES = [
