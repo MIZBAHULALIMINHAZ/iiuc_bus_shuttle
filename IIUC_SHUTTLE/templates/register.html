@@ -1,0 +1,10 @@
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+    <br>
+    <!-- Manager Login Button -->
+    <p>Maneger or Driver? <a href="{% url 'manager_login' %}">Login here</a>.</p>
+    
+</form>

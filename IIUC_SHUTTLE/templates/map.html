@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with User Location</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        /* Full page map styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        #map {
+            height: 100vh; /* Full viewport height */
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 10px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Title for the page -->
+    <h2>Interactive Map with Your Current Location</h2>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- JavaScript for Geolocation and Map -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize map with default view (zoomed out)
+            const map = L.map("map").setView([0, 0], 2); // Default: Zoomed out world view
+
+            // Load OpenStreetMap tiles
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19,
+            }).addTo(map);
+
+            // Check if the browser supports Geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    // Success callback
+                    function (position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        // Update the map view to user's location
+                        map.setView([lat, lng], 13);
+
+                        // Add a marker at the user's location
+                        L.marker([lat, lng])
+                            .addTo(map)
+                            .bindPopup("You are here!")
+                            .openPopup();
+                    },
+                    // Error callback
+                    function (error) {
+                        console.error("Geolocation error:", error.message);
+                        alert("Geolocation failed or was denied. Showing default location.");
+
+                        // Fallback to default location (New York City)
+                        const defaultLat = 40.7128;
+                        const defaultLng = -74.0060;
+
+                        map.setView([defaultLat, defaultLng], 13);
+                        L.marker([defaultLat, defaultLng])
+                            .addTo(map)
+                            .bindPopup("Default Location: New York City")
+                            .openPopup();
+                    }
+                );
+            } else {
+                // If Geolocation is not supported
+                alert("Geolocation is not supported by your browser. Showing default location.");
+
+                // Default to New York City
+                const defaultLat = 40.7128;
+                const defaultLng = -74.0060;
+
+                map.setView([defaultLat, defaultLng], 13);
+                L.marker([defaultLat, defaultLng])
+                    .addTo(map)
+                    .bindPopup("Default Location: New York City")
+                    .openPopup();
+            }
+        });
+    </script>
+</body>
+</html>

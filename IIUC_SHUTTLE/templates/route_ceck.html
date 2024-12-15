@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Check</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+        form {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Check Route with Waypoints</h2>
+
+    <form id="routeForm">
+        <label for="waypoint1_lat">Waypoint 1 Latitude:</label>
+        <input type="text" id="waypoint1_lat" name="waypoint1_lat">
+        <label for="waypoint1_lng">Longitude:</label>
+        <input type="text" id="waypoint1_lng" name="waypoint1_lng">
+        
+        <br><br>
+
+        <label for="waypoint2_lat">Waypoint 2 Latitude:</label>
+        <input type="text" id="waypoint2_lat" name="waypoint2_lat">
+        <label for="waypoint2_lng">Longitude:</label>
+        <input type="text" id="waypoint2_lng" name="waypoint2_lng">
+
+        <br><br>
+
+        <label for="waypoint3_lat">Waypoint 3 Latitude:</label>
+        <input type="text" id="waypoint3_lat" name="waypoint3_lat">
+        <label for="waypoint3_lng">Longitude:</label>
+        <input type="text" id="waypoint3_lng" name="waypoint3_lng">
+
+        <br><br>
+
+        <label for="waypoint4_lat">Waypoint 4 Latitude:</label>
+        <input type="text" id="waypoint4_lat" name="waypoint4_lat">
+        <label for="waypoint4_lng">Longitude:</label>
+        <input type="text" id="waypoint4_lng" name="waypoint4_lng">
+
+        <br><br>
+        <button type="submit">Show Route</button>
+    </form>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // Initialize the map with a default view (change to a central point like a city)
+        const map = L.map("map").setView([22.3586, 91.7683], 13);  // Default view (BOT coordinates)
+
+        // Load OpenStreetMap tiles
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Function to display route using OpenRouteService API
+        document.getElementById("routeForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // Prevent form submission and page reload
+
+            // Get the waypoint coordinates from the form inputs
+            const waypoint1_lat = parseFloat(document.getElementById("waypoint1_lat").value);
+            const waypoint1_lng = parseFloat(document.getElementById("waypoint1_lng").value);
+            const waypoint2_lat = parseFloat(document.getElementById("waypoint2_lat").value);
+            const waypoint2_lng = parseFloat(document.getElementById("waypoint2_lng").value);
+            const waypoint3_lat = parseFloat(document.getElementById("waypoint3_lat").value);
+            const waypoint3_lng = parseFloat(document.getElementById("waypoint3_lng").value);
+            const waypoint4_lat = parseFloat(document.getElementById("waypoint4_lat").value);
+            const waypoint4_lng = parseFloat(document.getElementById("waypoint4_lng").value);
+
+            // Validate if coordinates are provided
+            if (isNaN(waypoint1_lat) || isNaN(waypoint1_lng) ||
+                isNaN(waypoint2_lat) || isNaN(waypoint2_lng) ||
+                isNaN(waypoint3_lat) || isNaN(waypoint3_lng) ||
+                isNaN(waypoint4_lat) || isNaN(waypoint4_lng)) {
+                alert("Please enter valid coordinates for all waypoints.");
+                return;
+            }
+
+            // Create an array of waypoints
+            const waypoints = [
+                L.latLng(waypoint1_lat, waypoint1_lng),
+                L.latLng(waypoint2_lat, waypoint2_lng),
+                L.latLng(waypoint3_lat, waypoint3_lng),
+                L.latLng(waypoint4_lat, waypoint4_lng)
+            ];
+
+            // Clear the map (if there are existing route lines or markers)
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.LayerGroup) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Use OpenRouteService to get the route
+            const apiKey = "YOUR_OPENROUTESERVICE_API_KEY"; // Replace with your OpenRouteService API key
+
+            const apiUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${waypoints[0].lng},${waypoints[0].lat}&end=${waypoints[waypoints.length - 1].lng},${waypoints[waypoints.length - 1].lat}&via=${waypoints.slice(1, -1).map(p => `${p.lng},${p.lat}`).join(';')}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const routeGeoJSON = data.routes[0].geometry;
+                    const route = L.geoJSON(routeGeoJSON, {
+                        style: { color: "blue", weight: 4 }
+                    }).addTo(map);
+
+                    // Fit the map to the route bounds
+                    map.fitBounds(route.getBounds());
+
+                    // Add markers for the waypoints
+                    waypoints.forEach(function(latlng) {
+                        L.marker(latlng).addTo(map);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching route:', error);
+                    alert('Failed to fetch route.');
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+<h1>Welcome, {{ request.session.user_id }}</h1>
+<a href="{% url 'map' %}">See_location</a>
+<br>
+<a href="{% url 'logout' %}">Logout</a>

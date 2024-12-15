@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remove Bus</title>
+</head>
+<body>
+    <h2>Remove a Bus</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Remove Bus</button>
+    </form>
+
+    <p><a href="{% url 'manager_dashboard' %}">Back to Dashboard</a></p>
+</body>
+</html>
