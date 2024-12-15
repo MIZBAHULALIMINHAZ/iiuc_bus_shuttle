@@ -37,3 +37,13 @@ class Bus(models.Model):
 
     def __str__(self):
         return f"Bus {self.bus_number} - {self.bus_type} - Capacity: {self.capacity}"
+    
+from django.db import models
+
+class Route(models.Model):
+    route_no = models.CharField(max_length=10, unique=True)  # Unique route number
+    name = models.CharField(max_length=100)  # Route name or description
+    waypoints = models.JSONField()  # List of coordinates
+
+    def __str__(self):
+        return f"Route {self.route_no}: {self.name}"

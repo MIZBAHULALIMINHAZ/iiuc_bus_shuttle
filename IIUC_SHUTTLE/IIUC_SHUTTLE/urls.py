@@ -36,5 +36,10 @@ urlpatterns = [
     path('remove-bus/', views.remove_bus_view, name='remove_bus'),
     path('map/', views.map_view, name='map'),
     path('r/', views.map_check, name='mapd'),
+    path('add_route/', views.add_route, name='add_route'),
+    path('route_list/', views.route_list, name='route_list'),  # Manager route list
+    path('user_route_list/', views.user_route_list, name='user_route_list'),  # User route list
+    path('route_map/<int:route_id>/', views.route_map, name='route_map'),  # Map view
+
 ]
 

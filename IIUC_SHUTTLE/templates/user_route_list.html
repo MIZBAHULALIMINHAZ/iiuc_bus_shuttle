@@ -1,0 +1,21 @@
+<h1>Available Routes</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Route No</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for route in routes %}
+        <tr>
+            <td>{{ route.route_no }}</td>
+            <td>{{ route.name }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No routes available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

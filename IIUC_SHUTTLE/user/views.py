@@ -144,3 +144,39 @@ def map_check(request):
 
 def welcome(request):
     return render(request, 'welcome.html')
+
+from django.shortcuts import render, redirect
+from .forms import RouteForm
+from .models import Route
+
+# Manager adds a new route
+def add_route(request):
+    if request.method == 'POST':
+        form = RouteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('route_list')  # Redirect to route list after adding
+    else:
+        form = RouteForm()
+    return render(request, 'add_route.html', {'form': form})
+
+# Manager views all routes
+def route_list(request):
+    routes = Route.objects.all()
+    return render(request, 'route_list.html', {'routes': routes})
+
+# User views all available routes
+def user_route_list(request):
+    routes = Route.objects.all()
+    return render(request, 'user_route_list.html', {'routes': routes})
+
+from django.shortcuts import render, get_object_or_404
+def route_map(request, route_id):
+    # Fetch the route by ID
+    route = get_object_or_404(Route, id=route_id)
+    waypoints = route.waypoints  # JSONField stores the list of waypoints
+
+    return render(request, 'route_map.html', {
+        'route': route,
+        'waypoints': waypoints
+    })

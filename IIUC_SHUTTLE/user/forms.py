@@ -43,3 +43,14 @@ class RemoveBusForm(forms.Form):
         if not Bus.objects.filter(bus_number=bus_number).exists():
             raise forms.ValidationError("Bus with this number does not exist.")
         return bus_number
+    
+from django import forms
+from .models import Route
+
+class RouteForm(forms.ModelForm):
+    class Meta:
+        model = Route
+        fields = ['route_no', 'name', 'waypoints']
+        widgets = {
+            'waypoints': forms.Textarea(attrs={'placeholder': 'Enter waypoints as a JSON array, e.g., [[lat1, lon1], [lat2, lon2]]'}),
+        }

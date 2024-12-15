@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Route {{ route.route_no }}: {{ route.name }}</h1>
+    <div id="map"></div>
+    <script>
+        // Fetch waypoints from the template context
+        const waypoints = {{ waypoints|safe }};
+
+        // Initialize the map and set the initial view to the first waypoint
+        const map = L.map('map').setView(waypoints[0], 13);
+
+        // Add a tile layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Draw the route as a polyline
+        L.polyline(waypoints, { color: 'blue' }).addTo(map);
+
+        // Fit the map bounds to the route
+        map.fitBounds(waypoints);
+    </script>
+</body>
+</html>
